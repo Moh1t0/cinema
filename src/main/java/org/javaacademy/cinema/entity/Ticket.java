@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MovieEntity {
+public class Ticket {
     private Integer id;
-    private String name;
-    private String description;
+    private Place place;
+    private Session session;
+    private Boolean isBought;
 }

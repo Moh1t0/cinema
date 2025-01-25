@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SessionEntity {
+public class Session {
     private Integer id;
-    private MovieEntity movie;
+    private Movie movie;
     private LocalDateTime dateTime;
     private BigDecimal price;
 }

@@ -2,11 +2,12 @@ package org.javaacademy.cinema.repository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.javaacademy.cinema.entity.SessionEntity;
+import org.javaacademy.cinema.entity.Session;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -16,7 +17,7 @@ public class SessionRepository {
     private final MovieRepository movieRepository;
 
 
-    public Optional<SessionEntity> findById(Integer id) {
+    public Optional<Session> findById(Integer id) {
         String sql = "select * from session where id = ?";
         try {
             return Optional.ofNullable(jdbcTemplate.queryForObject(sql, this::mapToSession, id));
@@ -25,17 +26,34 @@ public class SessionRepository {
         }
     }
 
+    public List<Session> selectAll() {
+        String sql = "select * from session";
+        return jdbcTemplate.query(sql, this::mapToSession);
+    }
+
+    public Session createSession(Session session) {
+        String sql = "insert into session (movie_id, time, price) values(?, ?, ?) returning id";
+
+        Integer id = jdbcTemplate.queryForObject(sql, Integer.class,
+                session.getMovie().getId(),
+                session.getDateTime(),
+                session.getPrice());
+        session.setId(id);
+        return session;
+    }
+
+
     @SneakyThrows
-    private SessionEntity mapToSession(ResultSet rs, int rowNum) {
-        SessionEntity sessionEntity = new SessionEntity();
-        sessionEntity.setId(rs.getInt("id"));
-        sessionEntity.setPrice(rs.getBigDecimal("price"));
-        sessionEntity.setDateTime(rs.getTimestamp("time").toLocalDateTime());
+    private Session mapToSession(ResultSet rs, int rowNum) {
+        Session session = new Session();
+        session.setId(rs.getInt("id"));
+        session.setPrice(rs.getBigDecimal("price"));
+        session.setDateTime(rs.getTimestamp("time").toLocalDateTime());
         if (rs.getString("movie_id") != null) {
             Integer movieId = Integer.valueOf(rs.getString("movie_id"));
-            sessionEntity.setMovie(movieRepository.findById(movieId).orElse(null));
+            session.setMovie(movieRepository.findById(movieId).orElse(null));
         }
-        return sessionEntity;
+        return session;
     }
 
 

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlaceEntity {
+public class Place {
     private Integer id;
     private Integer number;
 }
