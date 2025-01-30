@@ -28,10 +28,6 @@ public class TicketRepository {
         }
     }
 
-
-    //3.3. Отдавать список купленных билетов для сеанса.
-    //3.4. Отдавать список некупленных билетов для сеанса.
-
     public Ticket createTicket(Ticket ticket) {
         String sql = "insert into ticket (place_id, session_id, is_bought) values(?, ?, ?) returning id";
 
