@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Place {
     private Integer id;
-    private Integer number;
+    private String name;
 }

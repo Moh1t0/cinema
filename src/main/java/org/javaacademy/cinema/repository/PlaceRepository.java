@@ -34,7 +34,7 @@ public class PlaceRepository {
     private Place mapToPlace(ResultSet rs, int rowNum) {
         Place place = new Place();
         place.setId(rs.getInt("id"));
-        place.setNumber(rs.getInt("number"));
+        place.setName(rs.getString("number"));
         return place;
     }
 }

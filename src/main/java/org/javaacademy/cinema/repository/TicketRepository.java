@@ -39,16 +39,15 @@ public class TicketRepository {
         return ticket;
     }
 
-    public List<Ticket> selectBoughtTicket(Integer sessionId) {
-        String sql = "select * from ticket where session_id = ? and is_bought = true";
-        return jdbcTemplate.query(sql, this::mapToTicket, sessionId);
+    public List<Ticket> selectBoughtTicket() {
+        String sql = "select * from ticket where is_bought = true";
+        return jdbcTemplate.query(sql, this::mapToTicket);
     }
 
-    public List<Ticket> selectNotBoughtTicket(Integer sessionId) {
-        String sql = "select * from ticket where session_id = ? and is_bought = false";
-        return jdbcTemplate.query(sql, this::mapToTicket, sessionId);
+    public List<Ticket> selectNotBoughtTicket() {
+        String sql = "select * from ticket where is_bought = false";
+        return jdbcTemplate.query(sql, this::mapToTicket);
     }
-
 
     public Ticket buyTicketById(Integer id) {
         Ticket ticket = findById(id).orElseThrow(() ->

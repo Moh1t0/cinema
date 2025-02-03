@@ -16,7 +16,6 @@ public class SessionRepository {
     private final JdbcTemplate jdbcTemplate;
     private final MovieRepository movieRepository;
 
-
     public Optional<Session> findById(Integer id) {
         String sql = "select * from session where id = ?";
         try {
@@ -41,7 +40,6 @@ public class SessionRepository {
         session.setId(id);
         return session;
     }
-
 
     @SneakyThrows
     private Session mapToSession(ResultSet rs, int rowNum) {
