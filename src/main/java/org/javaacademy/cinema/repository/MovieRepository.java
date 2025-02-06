@@ -6,6 +6,7 @@ import org.javaacademy.cinema.entity.Movie;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +29,7 @@ public class MovieRepository {
         String sql = "insert into movie (name, description) values(?, ?) returning id";
         Integer id = jdbcTemplate.queryForObject(sql, Integer.class, movie.getName(), movie.getDescription());
         movie.setId(id);
-       return movie;
+        return movie;
     }
 
     public List<Movie> selectAll() {

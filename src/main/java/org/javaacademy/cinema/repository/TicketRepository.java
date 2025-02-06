@@ -3,6 +3,7 @@ package org.javaacademy.cinema.repository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.javaacademy.cinema.entity.Ticket;
+import org.javaacademy.cinema.exeptions.BuyTicketUnableException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -51,10 +52,10 @@ public class TicketRepository {
 
     public Ticket buyTicketById(Integer id) {
         Ticket ticket = findById(id).orElseThrow(() ->
-                new IllegalArgumentException("Билет не найден!")
+                new BuyTicketUnableException("Билет не найден!")
         );
         if (ticket.getIsBought()) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Данный билет куплен !");
         }
         String sql = "update ticket set is_bought = true where id = ?";
         jdbcTemplate.update(sql, id);
