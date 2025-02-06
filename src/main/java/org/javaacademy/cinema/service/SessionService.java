@@ -26,7 +26,8 @@ public class SessionService {
     }
 
     public List<String> getFreePlace(Integer sessionId) {
-        return ticketRepository.selectNotBoughtTicket().stream()
+        return ticketRepository.selectNotBoughtTicket()
+                .stream()
                 .filter(ticket -> ticket.getSession().getId().equals(sessionId))
                 .map(Ticket::getPlace)
                 .map(Place::getName)
