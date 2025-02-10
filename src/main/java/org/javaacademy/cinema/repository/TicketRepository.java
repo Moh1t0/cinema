@@ -45,9 +45,24 @@ public class TicketRepository {
         return jdbcTemplate.query(sql, this::mapToTicket);
     }
 
-    public List<Ticket> selectNotBoughtTicket() {
-        String sql = "select * from ticket where is_bought = false";
-        return jdbcTemplate.query(sql, this::mapToTicket);
+    public List<String> selectFreePlaces(Integer sessionId) {
+        String sql = """
+                select p.name
+                from ticket t
+                inner join place p on t.place_id = p.id
+                where is_bought = false and t.session_id = ?
+                """;
+        return jdbcTemplate.queryForList(sql, String.class, sessionId);
+    }
+
+    public Ticket findTicketBySessionAndPlaceName(Integer sessionId, String placeName) {
+        String sql = """
+                select *
+                from ticket t
+                inner join place p on p.id = t.place_id
+                where session_id = ? and p.name = ?
+                """;
+        return jdbcTemplate.queryForObject(sql, this::mapToTicket, sessionId, placeName);
     }
 
     public Ticket buyTicketById(Integer id) {

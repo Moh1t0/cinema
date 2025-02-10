@@ -26,24 +26,35 @@ public class SessionService {
     }
 
     public List<String> getFreePlace(Integer sessionId) {
-        return ticketRepository.selectNotBoughtTicket()
-                .stream()
-                .filter(ticket -> ticket.getSession().getId().equals(sessionId))
-                .map(Ticket::getPlace)
-                .map(Place::getName)
-                .toList();
+        return ticketRepository.selectFreePlaces(sessionId);
     }
 
     public Session save(SessionDto sessionDto) {
         Session session = mapper.convertToEntity(sessionDto);
         List<Place> places = placeRepository.selectAll();
         places.stream()
-                .map(Place::getId)
-                .map(placeId -> new Ticket(null,
-                        placeRepository.findById(placeId).orElse(null),
-                        sessionRepository.findById(session.getId()).orElse(null),
-                        false))
+                .map(place -> new Ticket(null, place, session, false))
                 .forEach(ticketRepository::createTicket);
-        return session;
+        return sessionRepository.createSession(session);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

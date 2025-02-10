@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.javaacademy.cinema.dto.BookingTicketDto;
 import org.javaacademy.cinema.dto.TicketDto;
+import org.javaacademy.cinema.service.AdminAuthService;
 import org.javaacademy.cinema.service.TicketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/ticket")
 @Tag(name = "Билет", description = "Контроллер для работы с билетами для администратора и пользователя")
 public class TicketController {
-    private static final String SECRET_TOKEN = "secretadmin123";
     private final TicketService ticketService;
+    private final AdminAuthService adminAuthService;
 
     @Operation(summary = "Покупка билета",
             description = "EndPoint для покупки билета по id и номеру сеанса",
@@ -46,7 +47,7 @@ public class TicketController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = TicketDto.class)))))
     @GetMapping("/saled")
     public ResponseEntity<?> getSaledTicket(@RequestHeader(value = "user-token") String userToken) {
-        if (SECRET_TOKEN.equals(userToken)) {
+        if (adminAuthService.isAdmin(userToken)) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(ticketService.getSaledTicket());
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Нет доступа!");

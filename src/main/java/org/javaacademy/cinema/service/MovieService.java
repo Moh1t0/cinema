@@ -19,7 +19,27 @@ public class MovieService {
         return movieRepository.selectAll().stream().map(mapper::convertToDto).toList();
     }
 
-    public Movie save(MovieDto movieDto) {
-        return movieRepository.createMovie(mapper.convertToEntity(movieDto));
+    public MovieDto save(MovieDto movieDto) {
+        Movie movie = movieRepository.createMovie(mapper.convertToEntity(movieDto));
+        return mapper.convertToDto(movie);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
