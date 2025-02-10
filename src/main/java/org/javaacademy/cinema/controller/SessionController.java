@@ -8,16 +8,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.javaacademy.cinema.dto.SessionDto;
+import org.javaacademy.cinema.service.AdminAuthService;
 import org.javaacademy.cinema.service.SessionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -26,7 +22,7 @@ import java.util.List;
 @Tag(name = "Сеанс", description = "Контроллер для работы с сеансами")
 public class SessionController {
     private final SessionService sessionService;
-    private static final String SECRET_TOKEN = "secretadmin123";
+    private final AdminAuthService adminAuthService;
 
     @Operation(summary = "Список всех сеансов", description = "Возвращает список всех сеансов",
             responses = @ApiResponse(responseCode = "200", description = "Список сеансов",
@@ -53,10 +49,11 @@ public class SessionController {
                     @ApiResponse(responseCode = "403", description = "Нет доступа!")
             })
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> save(@RequestHeader(value = "user-token") String userToken,
                                   @RequestBody SessionDto sessionDto) {
 
-        if (SECRET_TOKEN.equals(userToken)) {
+        if (adminAuthService.isAdmin(userToken)) {
             return ResponseEntity.ok(sessionService.save(sessionDto));
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Нет доступа!");

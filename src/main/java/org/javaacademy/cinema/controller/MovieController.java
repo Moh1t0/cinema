@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.javaacademy.cinema.dto.MovieDto;
+import org.javaacademy.cinema.service.AdminAuthService;
 import org.javaacademy.cinema.service.MovieService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,8 @@ import java.util.List;
 @RequestMapping("/movie")
 @Tag(name = "Фильм", description = "Контроллер для работы с фильмами")
 public class MovieController {
-    private static final String SECRET_TOKEN = "secretadmin123";
     private final MovieService movieService;
+    private final AdminAuthService adminAuthService;
 
 
     @Operation(summary = "Список всех фильмов", description = "Возвращает список всех фильмов",
@@ -48,9 +49,35 @@ public class MovieController {
     @PostMapping
     public ResponseEntity<?> save(@RequestHeader(value = "user-token") String userToken,
                                    @RequestBody MovieDto movieDto) {
-        if (SECRET_TOKEN.equals(userToken)) {
+        if (adminAuthService.isAdmin(userToken)) {
             return ResponseEntity.status(HttpStatus.CREATED).body(movieService.save(movieDto));
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Нет доступа!");
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

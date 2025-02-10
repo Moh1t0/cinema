@@ -9,7 +9,6 @@ import org.javaacademy.cinema.repository.TicketRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -21,12 +20,7 @@ public class TicketService {
         Integer sessionId = bookingTicketDto.getSessionId();
         String placeName = bookingTicketDto.getPlaceName();
 
-        Ticket ticket = Stream.concat(ticketRepository.selectNotBoughtTicket().stream(),
-                        ticketRepository.selectBoughtTicket().stream())
-                .filter(t -> t.getSession().getId().equals(sessionId))
-                .filter(t -> t.getPlace().getName().equals(placeName))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Билет не найден!"));
+        Ticket ticket = ticketRepository.findTicketBySessionAndPlaceName(sessionId, placeName);
 
         ticketRepository.buyTicketById(ticket.getId());
         return mapper.convertToDto(ticket);
@@ -35,4 +29,23 @@ public class TicketService {
     public List<Ticket> getSaledTicket() {
         return ticketRepository.selectBoughtTicket();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cinema-test
+    username: postgres
+    password: Vanek0809
+    driver: org.postgresql.Driver
+

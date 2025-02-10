@@ -14,6 +14,23 @@ public class MovieMapper {
         return new Movie(null, movieDto.getName(), movieDto.getDescription());
     }
     public MovieDto convertToDto(Movie movie) {
-        return new MovieDto(movie.getName(), movie.getDescription());
+        return new MovieDto(movie.getName(), movie.getDescription(), movie.getId());
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
