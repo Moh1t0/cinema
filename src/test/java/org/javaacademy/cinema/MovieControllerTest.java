@@ -103,5 +103,6 @@ public class MovieControllerTest {
         assertEquals(2, result.size());
         assertEquals(firstMovieDto.getName(), result.get(0).getName());
         assertEquals(firstMovieDto.getDescription(), result.get(0).getDescription());
+
     }
 }
