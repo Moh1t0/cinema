@@ -1,4 +1,4 @@
-package org.javaacademy.cinema.dto;
+package org.javaacademy.cinema.dto.ticket;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;

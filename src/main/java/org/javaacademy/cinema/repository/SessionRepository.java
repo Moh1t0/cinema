@@ -2,6 +2,7 @@ package org.javaacademy.cinema.repository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.entity.Session;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class SessionRepository {
     private final JdbcTemplate jdbcTemplate;
     private final MovieRepository movieRepository;
@@ -21,6 +23,7 @@ public class SessionRepository {
         try {
             return Optional.ofNullable(jdbcTemplate.queryForObject(sql, this::mapToSession, id));
         } catch (EmptyResultDataAccessException e) {
+            log.error("Сессия с id {} не найдена", id);
             return Optional.empty();
         }
     }
@@ -32,12 +35,18 @@ public class SessionRepository {
 
     public Session createSession(Session session) {
         String sql = "insert into session (movie_id, time, price) values(?, ?, ?) returning id";
+        log.info("Сохраняем сессию с movieId: {}, dateTime: {}, price: {}",
+                session.getMovie().getId(),
+                session.getDateTime(),
+                session.getPrice());
 
         Integer id = jdbcTemplate.queryForObject(sql, Integer.class,
                 session.getMovie().getId(),
                 session.getDateTime(),
                 session.getPrice());
+
         session.setId(id);
+        log.info("Сессия сохранена с id {}", id);
         return session;
     }
 
@@ -47,6 +56,9 @@ public class SessionRepository {
         session.setId(rs.getInt("id"));
         session.setPrice(rs.getBigDecimal("price"));
         session.setDateTime(rs.getTimestamp("time").toLocalDateTime());
+
+        log.info("Загруженная сессия с id: {}, dateTime: {}", session.getId(), session.getDateTime());
+
         if (rs.getString("movie_id") != null) {
             Integer movieId = Integer.valueOf(rs.getString("movie_id"));
             session.setMovie(movieRepository.findById(movieId).orElse(null));

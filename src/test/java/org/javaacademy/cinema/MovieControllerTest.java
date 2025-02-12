@@ -8,7 +8,7 @@ import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
-import org.javaacademy.cinema.dto.MovieDto;
+import org.javaacademy.cinema.dto.movie.CreateMovieDto;
 import org.javaacademy.cinema.service.MovieService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,12 +57,12 @@ public class MovieControllerTest {
     @DisplayName("Успешное создание фильма")
     @Test
     public void createSuccess() {
-        MovieDto expected = MovieDto.builder()
+        CreateMovieDto expected = CreateMovieDto.builder()
                 .name("test name")
                 .description("test description")
                 .build();
 
-        MovieDto result = given(requestSpecification)
+        CreateMovieDto result = given(requestSpecification)
                 .header(header)
                 .body(expected)
                 .post()
@@ -70,7 +70,7 @@ public class MovieControllerTest {
                 .spec(responseSpecification)
                 .statusCode(201)
                 .extract()
-                .as(MovieDto.class);
+                .as(CreateMovieDto.class);
 
         assertEquals(expected.getName(), result.getName());
         assertEquals(expected.getDescription(), result.getDescription());
@@ -81,18 +81,18 @@ public class MovieControllerTest {
     public void getAllSuccess() {
         String name = "test name";
         String description = "test description";
-        MovieDto firstMovieDto = MovieDto.builder()
+        CreateMovieDto firstMovieDto = CreateMovieDto.builder()
                 .name(name)
                 .description(description)
                 .build();
-        MovieDto secondMovieDto = MovieDto.builder()
+        CreateMovieDto secondMovieDto = CreateMovieDto.builder()
                 .name(name)
                 .description(description)
                 .build();
         movieService.save(firstMovieDto);
         movieService.save(secondMovieDto);
 
-        List<MovieDto> result = given(requestSpecification)
+        List<CreateMovieDto> result = given(requestSpecification)
                 .get()
                 .then()
                 .spec(responseSpecification)

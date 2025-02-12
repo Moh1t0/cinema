@@ -25,8 +25,8 @@ public class SessionDto {
     private Integer movieId;
 
     @Schema(description = "Дата сеанса")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonProperty("date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonProperty("date_time")
     private LocalDateTime dateTime;
 
     @Schema(description = "Цена билета")

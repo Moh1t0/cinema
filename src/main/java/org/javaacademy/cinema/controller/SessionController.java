@@ -7,7 +7,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.dto.SessionDto;
+import org.javaacademy.cinema.entity.Session;
+import org.javaacademy.cinema.mapper.SessionMapper;
 import org.javaacademy.cinema.service.AdminAuthService;
 import org.javaacademy.cinema.service.SessionService;
 import org.springframework.http.HttpStatus;
@@ -18,11 +21,13 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/session")
 @Tag(name = "Сеанс", description = "Контроллер для работы с сеансами")
 public class SessionController {
     private final SessionService sessionService;
     private final AdminAuthService adminAuthService;
+    private final SessionMapper mapper;
 
     @Operation(summary = "Список всех сеансов", description = "Возвращает список всех сеансов",
             responses = @ApiResponse(responseCode = "200", description = "Список сеансов",
@@ -54,7 +59,11 @@ public class SessionController {
                                   @RequestBody SessionDto sessionDto) {
 
         if (adminAuthService.isAdmin(userToken)) {
-            return ResponseEntity.ok(sessionService.save(sessionDto));
+            Session savedSession = sessionService.save(sessionDto);
+
+            SessionDto sessionDtoResponse = mapper.convertToDto(savedSession);
+            log.info("Полученная SessionDto: {}", sessionDtoResponse);
+            return ResponseEntity.ok(sessionDtoResponse);
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Нет доступа!");
     }

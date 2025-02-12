@@ -1,6 +1,6 @@
 package org.javaacademy.cinema.mapper;
 
-import org.javaacademy.cinema.dto.TicketDto;
+import org.javaacademy.cinema.dto.ticket.TicketDto;
 import org.javaacademy.cinema.entity.Ticket;
 import org.springframework.stereotype.Component;
 

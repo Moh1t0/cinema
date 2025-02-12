@@ -2,13 +2,20 @@ package org.javaacademy.cinema;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.common.mapper.TypeRef;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
-import org.javaacademy.cinema.dto.MovieDto;
 import org.javaacademy.cinema.dto.SessionDto;
+import org.javaacademy.cinema.dto.movie.CreateMovieDto;
+import org.javaacademy.cinema.dto.movie.MovieDto;
+import org.javaacademy.cinema.entity.Place;
+import org.javaacademy.cinema.entity.Session;
+import org.javaacademy.cinema.entity.Ticket;
+import org.javaacademy.cinema.repository.PlaceRepository;
+import org.javaacademy.cinema.repository.TicketRepository;
 import org.javaacademy.cinema.service.MovieService;
 import org.javaacademy.cinema.service.SessionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,9 +29,11 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureMockMvc
@@ -45,6 +54,9 @@ public class SessionControllerTest {
             delete from session;
             delete from movie;
             """;
+    private static final int SESSION_COUNT = 3;
+    private final static LocalDateTime SESSION_TEST_LOCAL_DATE_TIME =
+            LocalDateTime.of(2025, 2, 12, 22, 17);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -52,6 +64,10 @@ public class SessionControllerTest {
     private SessionService sessionService;
     @Autowired
     private MovieService movieService;
+    @Autowired
+    private PlaceRepository placeRepository;
+    @Autowired
+    private TicketRepository ticketRepository;
 
     @BeforeEach
     public void cleanDatabase() {
@@ -61,20 +77,13 @@ public class SessionControllerTest {
     @DisplayName("Успешное создание сеанса")
     @Test
     public void createSuccess() {
-        MovieDto movieDto = MovieDto.builder()
+        CreateMovieDto movieDto = CreateMovieDto.builder()
                 .name("test name")
                 .description("test description")
                 .build();
         int movieId = movieService.save(movieDto).getId();
-        LocalDateTime date = LocalDateTime.of(
-                2025,
-                2,
-                12,
-                16,
-                58,
-                54);
         SessionDto sessionDto = SessionDto.builder()
-                .dateTime(date)
+                .dateTime(SESSION_TEST_LOCAL_DATE_TIME)
                 .movieId(movieId)
                 .price(BigDecimal.TEN)
                 .build();
@@ -92,29 +101,58 @@ public class SessionControllerTest {
         assertEquals(sessionDto.getMovieId(), result.getMovieId());
     }
 
+    @DisplayName("Успешное получение всех сеансов")
+    @Test
+    public void getAllSuccess() {
+        generateSessionWithMovies("test", "test", BigDecimal.TEN);
 
+        List<SessionDto> sessionDtos = given(requestSpecification)
+                .get()
+                .then()
+                .spec(responseSpecification)
+                .statusCode(200)
+                .extract()
+                .as(new TypeRef<>() {
+                });
+        assertEquals(SESSION_COUNT, sessionDtos.size());
+    }
 
+//    @DisplayName("Успешное получение свободных мест")
+//    @Test
+//    public void getFreePlacesSuccess() {
+//
+//        CreateMovieDto movieDto = CreateMovieDto.builder()
+//                .name("Test Movie")
+//                .description("Test description")
+//                .build();
+//        int movieId = movieService.save(movieDto).getId();
+//
+//        LocalDateTime dateTime = LocalDateTime.now();
+//        SessionDto sessionDto = SessionDto.builder()
+//                .movieId(movieId)
+//                .price(BigDecimal.TEN)
+//                .dateTime(dateTime)
+//                .build();
+//        Session savedSession = sessionService.save(sessionDto);
+//    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    private void generateSessionWithMovies(String movieName, String movieDescription, BigDecimal price) {
+        for (int i = 1; i <= SESSION_COUNT; i++) {
+            CreateMovieDto createMovieDto = CreateMovieDto.builder()
+                    .name(movieName)
+                    .description(movieDescription)
+                    .build();
+            MovieDto savedMovieDto = movieService.save(createMovieDto);
+            LocalDateTime dateTime = LocalDateTime.now();
+            SessionDto sessionDto = SessionDto.builder()
+                    .movieId(savedMovieDto.getId())
+                    .price(price)
+                    .dateTime(dateTime)
+                    .build();
+            sessionService.save(sessionDto);
+        }
+    }
 }
+
+
+

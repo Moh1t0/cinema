@@ -33,8 +33,8 @@ public class TicketRepository {
         String sql = "insert into ticket (place_id, session_id, is_bought) values(?, ?, ?) returning id";
 
         Integer id = jdbcTemplate.queryForObject(sql, Integer.class,
-                ticket.getPlace(),
-                ticket.getSession(),
+                ticket.getPlace().getId(),
+                ticket.getSession().getId(),
                 ticket.getIsBought());
         ticket.setId(id);
         return ticket;

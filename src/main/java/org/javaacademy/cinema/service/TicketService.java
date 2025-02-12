@@ -1,8 +1,8 @@
 package org.javaacademy.cinema.service;
 
 import lombok.RequiredArgsConstructor;
-import org.javaacademy.cinema.dto.BookingTicketDto;
-import org.javaacademy.cinema.dto.TicketDto;
+import org.javaacademy.cinema.dto.ticket.BookingTicketDto;
+import org.javaacademy.cinema.dto.ticket.TicketDto;
 import org.javaacademy.cinema.entity.Ticket;
 import org.javaacademy.cinema.mapper.TicketMapper;
 import org.javaacademy.cinema.repository.TicketRepository;

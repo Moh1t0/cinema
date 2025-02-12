@@ -11,4 +11,9 @@ public class Movie {
     private Integer id;
     private String name;
     private String description;
+
+    public Movie(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

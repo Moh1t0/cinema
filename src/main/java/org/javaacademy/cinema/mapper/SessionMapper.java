@@ -18,7 +18,6 @@ public class SessionMapper {
         }
 
         public SessionDto convertToDto(Session session) {
-            Movie movie = movieRepository.findById(session.getMovie().getId()).orElseThrow();
-            return new SessionDto(session.getId(), session.getDateTime(), session.getPrice());
+            return new SessionDto(session.getMovie().getId(), session.getDateTime(), session.getPrice());
         }
 }

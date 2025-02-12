@@ -7,7 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.javaacademy.cinema.dto.MovieDto;
+import org.javaacademy.cinema.dto.movie.CreateMovieDto;
+import org.javaacademy.cinema.dto.movie.MovieDto;
 import org.javaacademy.cinema.service.AdminAuthService;
 import org.javaacademy.cinema.service.MovieService;
 import org.springframework.http.HttpStatus;
@@ -32,10 +33,10 @@ public class MovieController {
     @Operation(summary = "Список всех фильмов", description = "Возвращает список всех фильмов",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Список всех фильмов",
-                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = MovieDto.class))))
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = CreateMovieDto.class))))
             })
     @GetMapping
-    public List<MovieDto> getAll() {
+    public List<CreateMovieDto> getAll() {
         return movieService.getAll();
     }
 
@@ -43,12 +44,12 @@ public class MovieController {
             description = "Создание фильма и сохранение в БД",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Фильм успешно сохранен",
-                            content = @Content(schema = @Schema(implementation = MovieDto.class))),
+                            content = @Content(schema = @Schema(implementation = CreateMovieDto.class))),
                     @ApiResponse(responseCode = "403", description = "Нет доступа!")
             })
     @PostMapping
     public ResponseEntity<?> save(@RequestHeader(value = "user-token") String userToken,
-                                   @RequestBody MovieDto movieDto) {
+                                         @RequestBody CreateMovieDto movieDto) {
         if (adminAuthService.isAdmin(userToken)) {
             return ResponseEntity.status(HttpStatus.CREATED).body(movieService.save(movieDto));
         }
