@@ -24,28 +24,4 @@ public class MovieService {
         Movie movie = movieRepository.createMovie(mapper.convertToEntity(movieDto));
         return mapper.convertToDto(movie);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

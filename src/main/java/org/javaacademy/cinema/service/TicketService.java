@@ -29,23 +29,4 @@ public class TicketService {
     public List<Ticket> getSaledTicket() {
         return ticketRepository.selectBoughtTicket();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

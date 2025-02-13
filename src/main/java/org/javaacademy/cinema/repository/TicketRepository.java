@@ -47,7 +47,7 @@ public class TicketRepository {
 
     public List<String> selectFreePlaces(Integer sessionId) {
         String sql = """
-                select p.name
+                select p.number
                 from ticket t
                 inner join place p on t.place_id = p.id
                 where is_bought = false and t.session_id = ?
@@ -60,7 +60,7 @@ public class TicketRepository {
                 select *
                 from ticket t
                 inner join place p on p.id = t.place_id
-                where session_id = ? and p.name = ?
+                where session_id = ? and p.number = ?
                 """;
         return jdbcTemplate.queryForObject(sql, this::mapToTicket, sessionId, placeName);
     }

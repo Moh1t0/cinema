@@ -35,16 +35,11 @@ public class SessionRepository {
 
     public Session createSession(Session session) {
         String sql = "insert into session (movie_id, time, price) values(?, ?, ?) returning id";
-        log.info("Сохраняем сессию с movieId: {}, dateTime: {}, price: {}",
-                session.getMovie().getId(),
-                session.getDateTime(),
-                session.getPrice());
 
         Integer id = jdbcTemplate.queryForObject(sql, Integer.class,
                 session.getMovie().getId(),
                 session.getDateTime(),
                 session.getPrice());
-
         session.setId(id);
         log.info("Сессия сохранена с id {}", id);
         return session;

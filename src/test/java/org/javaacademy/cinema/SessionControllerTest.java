@@ -11,9 +11,6 @@ import io.restassured.specification.ResponseSpecification;
 import org.javaacademy.cinema.dto.SessionDto;
 import org.javaacademy.cinema.dto.movie.CreateMovieDto;
 import org.javaacademy.cinema.dto.movie.MovieDto;
-import org.javaacademy.cinema.entity.Place;
-import org.javaacademy.cinema.entity.Session;
-import org.javaacademy.cinema.entity.Ticket;
 import org.javaacademy.cinema.repository.PlaceRepository;
 import org.javaacademy.cinema.repository.TicketRepository;
 import org.javaacademy.cinema.service.MovieService;
@@ -24,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -50,12 +48,11 @@ public class SessionControllerTest {
             .build();
     private static final String DELETE_TABLES = """
             delete from ticket;
-            delete from place;
             delete from session;
             delete from movie;
             """;
     private static final int SESSION_COUNT = 3;
-    private final static LocalDateTime SESSION_TEST_LOCAL_DATE_TIME =
+    private static final LocalDateTime SESSION_TEST_LOCAL_DATE_TIME =
             LocalDateTime.of(2025, 2, 12, 22, 17);
 
     @Autowired
@@ -93,7 +90,7 @@ public class SessionControllerTest {
                 .post()
                 .then()
                 .spec(responseSpecification)
-                .statusCode(200)
+                .statusCode(HttpStatus.OK.value())
                 .extract()
                 .as(SessionDto.class);
         assertEquals(sessionDto.getPrice(), result.getPrice());
@@ -110,31 +107,49 @@ public class SessionControllerTest {
                 .get()
                 .then()
                 .spec(responseSpecification)
-                .statusCode(200)
+                .statusCode(HttpStatus.OK.value())
                 .extract()
                 .as(new TypeRef<>() {
                 });
         assertEquals(SESSION_COUNT, sessionDtos.size());
     }
 
-//    @DisplayName("Успешное получение свободных мест")
-//    @Test
-//    public void getFreePlacesSuccess() {
-//
-//        CreateMovieDto movieDto = CreateMovieDto.builder()
-//                .name("Test Movie")
-//                .description("Test description")
-//                .build();
-//        int movieId = movieService.save(movieDto).getId();
-//
-//        LocalDateTime dateTime = LocalDateTime.now();
-//        SessionDto sessionDto = SessionDto.builder()
-//                .movieId(movieId)
-//                .price(BigDecimal.TEN)
-//                .dateTime(dateTime)
-//                .build();
-//        Session savedSession = sessionService.save(sessionDto);
-//    }
+    @DisplayName("Успешное получение свободных мест")
+    @Test
+    public void getFreePlacesSuccess() {
+        CreateMovieDto movieDto = CreateMovieDto.builder()
+                .name("Test Movie")
+                .description("Test description")
+                .build();
+        int movieId = movieService.save(movieDto).getId();
+
+        LocalDateTime dateTime = LocalDateTime.now();
+        SessionDto sessionDto = SessionDto.builder()
+                .movieId(movieId)
+                .price(BigDecimal.TEN)
+                .dateTime(dateTime)
+                .build();
+        SessionDto savedSession = sessionService.save(sessionDto);
+
+        given(requestSpecification)
+                .header(header)
+                .body(sessionDto)
+                .post()
+                .then()
+                .spec(responseSpecification)
+                .statusCode(HttpStatus.OK.value());
+        String expected = "[\"A1\",\"A2\",\"A3\",\"A4\",\"A5\",\"B1\",\"B2\",\"B3\",\"B4\",\"B5\"]";
+
+        String response = given(requestSpecification)
+                .param("sessionId", savedSession.getId())
+                .get("/" + savedSession.getId() + "/free-place")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+                .body()
+                .asString();
+        assertEquals(expected, response);
+    }
 
     private void generateSessionWithMovies(String movieName, String movieDescription, BigDecimal price) {
         for (int i = 1; i <= SESSION_COUNT; i++) {

@@ -29,32 +29,12 @@ public class SessionService {
         return ticketRepository.selectFreePlaces(sessionId);
     }
 
-    public Session save(SessionDto sessionDto) {
+    public SessionDto save(SessionDto sessionDto) {
         Session session = mapper.convertToEntity(sessionDto);
         List<Place> places = placeRepository.selectAll();
         places.stream()
                 .map(place -> new Ticket(null, place, session, false))
                 .forEach(ticketRepository::createTicket);
-        return sessionRepository.createSession(session);
+        return mapper.convertToDto(sessionRepository.createSession(session));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

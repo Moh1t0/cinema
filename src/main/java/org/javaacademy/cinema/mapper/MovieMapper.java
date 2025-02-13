@@ -1,7 +1,5 @@
 package org.javaacademy.cinema.mapper;
 
-
-import lombok.RequiredArgsConstructor;
 import org.javaacademy.cinema.dto.movie.CreateMovieDto;
 import org.javaacademy.cinema.dto.movie.MovieDto;
 import org.javaacademy.cinema.entity.Movie;

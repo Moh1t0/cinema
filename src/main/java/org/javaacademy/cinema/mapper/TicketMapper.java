@@ -9,7 +9,7 @@ public class TicketMapper {
     public TicketDto convertToDto(Ticket ticket) {
         return new TicketDto(
                 ticket.getId(),
-                ticket.getPlace().getName(),
+                ticket.getPlace().getNumber(),
                 ticket.getSession().getMovie().getName(),
                 ticket.getSession().getDateTime());
     }

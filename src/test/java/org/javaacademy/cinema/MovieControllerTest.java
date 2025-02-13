@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -40,7 +41,6 @@ public class MovieControllerTest {
             .build();
     private static final String DELETE_TABLES = """
             delete from ticket;
-            delete from place;
             delete from session;
             delete from movie;
             """;
@@ -68,7 +68,7 @@ public class MovieControllerTest {
                 .post()
                 .then()
                 .spec(responseSpecification)
-                .statusCode(201)
+                .statusCode(HttpStatus.CREATED.value())
                 .extract()
                 .as(CreateMovieDto.class);
 
@@ -96,7 +96,7 @@ public class MovieControllerTest {
                 .get()
                 .then()
                 .spec(responseSpecification)
-                .statusCode(200)
+                .statusCode(HttpStatus.OK.value())
                 .extract()
                 .as(new TypeRef<>() {
                 });

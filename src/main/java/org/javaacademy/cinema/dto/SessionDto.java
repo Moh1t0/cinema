@@ -20,6 +20,9 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SessionDto {
 
+    @Schema(description = "id сеанса")
+    private Integer id;
+
     @Schema(description = "id фильма")
     @JsonProperty("movie_id")
     private Integer movieId;
@@ -31,23 +34,10 @@ public class SessionDto {
 
     @Schema(description = "Цена билета")
     private BigDecimal price;
+
+    public SessionDto(Integer movieId, LocalDateTime dateTime, BigDecimal price) {
+        this.movieId = movieId;
+        this.dateTime = dateTime;
+        this.price = price;
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
